@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style type="text/css">
+    .main {
+      z-index: 0
+      padding: 16px;
+      margin-top: 3%;
+      height:87%; 
+     
+      font-size: 13px;
+    }
+    .dropdown-menu {
+    min-width: 100px !important;
+  }
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.428571429;
+  border-radius: 15px;
+  ;
+}
+.post_container{
+  border-radius: 5px;
+  border-color:#D9D1F5;
+}
+.btn-circle-red {
+  box-shadow:inset 0px 0px 0px 0px #cf866c;
+  background:linear-gradient(to bottom, #ff0000 5%, #ff0000 100%);
+  background-color:#d0451b;
+  border-radius:20px;
+  border:1px solid #942911;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:13px;
+  padding:8px 13px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #854629;
+}
+.btn-circle-red:hover {
+  background:linear-gradient(to bottom, #ff5555 5%, #ff5555 100%);
+  background-color:#bc3315;
+}
+.btn-round {
+  width: 80px;
+  height: 30px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  color:#3333ff;
+  line-height: 0.428571429;
+  border-radius: 3px;
+}
+.btn-circle-green{
+  box-shadow:inset -50px -15px 2px -50px #3dc21b;
+  background:linear-gradient(to bottom, #00ff00 5%, #00ff00 100%);
+  background-color:#14e01b;
+  border-radius:20px;
+  border:1px solid #18ab29;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:13px;
+  font-weight:bold;
+  padding:8px 13px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #2f6627;
+}
+.btn-circle-green:hover {
+  background:linear-gradient(to bottom, #55ff55 5%, #55ff55 100%);
+  background-color:#5cbf2a;
+}
+.myButton:hover {
+  background:linear-gradient(to bottom, #5cbf2a 5%, #44c767 100%);
+  background-color:#5cbf2a;
+}
+  
+  </style>
+<script type="text/javascript">
+  var last_post_id=0;
+  function switchLight(postId, lightType){
+    var form=new FormData(document.getElementById('fakeform'));
+    form.append('postId', postId);
+    if(lightType==1 | lightType=="1"){
+      lightType="green";
+    }
+    if(lightType==2 | lightType=="2"){
+      lightType="red";
+    }
+    form.append('lightType', lightType);
+    var http = new XMLHttpRequest();
+    http.onreadystatechange = function(){
+      if(this.readyState == 4 && this.status == 200){
+        document.getElementById(postId+"truevalue").innerHTML="";
+        document.getElementById(postId+"falsevalue").innerHTML="";
+        loadLightActivity(postId);
+      }
+    }
+    http.open("POST","{% url 'switchLight' %}", true);
+    http.send(form);
+  }
+  function loadLightActivity(postId) {
+    
+    $("#writeCommentpannel"+postId).slideUp(0);
+    var form = new FormData(document.getElementById('fakeform'));
+    form.append("postId", postId);
+    var http=new XMLHttpRequest();
+    http.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 200){
+        var result= this.responseText.split(";");
+        if(result[0] !=""){
+          var greenResult = result[0].split(",");
+          document.getElementById(postId+"truevalue").innerHTML=greenResult[0]+","+greenResult[2];
+          if(greenResult[1] == "0"){
+          $("#writeCommentpannel"+postId).slideDown(0);
+          document.getElementById("lighttype"+postId).value="green";
+          }
+        }
+        if(result[1]!=""){
+          var redResult=result[1].split(",");
+          document.getElementById(postId+"falsevalue").innerHTML=redResult[0]+","+redResult[2];
+          if(redResult[1] == "0"){
+            $("#writeCommentpannel"+postId).slideDown(0);
+            document.getElementById("lighttype"+postId).value="red";
+          }
+        }
+      }
+    }
+    http.open("POST", "{% url 'getLight' %}", true);
+    http.send(form);
+  }
+  function writeComment(postId){
+    var form=new FormData(document.getElementById('fakeform'));
+    form.append("postId", postId);
+    form.append("lighttype", document.getElementById("lighttype"+postId).value);
+    form.append("comment", document.getElementById("comment"+postId).value);
+    var http=new XMLHttpRequest();
+    http.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 200){
+        openComments(postId);
+      }
+    }
+    http.open("POST", "{% url 'writePostComment' %}",true);
+    http.send(form);
+  }
+  function openComments(postId){
+    var form=new FormData(document.getElementById('fakeform'));
+    form.append("postId", postId);
+    var http = new XMLHttpRequest();
+    http.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 200){
+        $('#comments'+postId).slideDown(0);
+        var comments= this.responseText.split(";");
+        var tableContent="<table width='90%;' cellspacing='-2'>";
+        for(var i=1; i<comments.length; i++){
+          tableContent+="<tr style='background-color:#f0f0f0;border-left-radius:0px'><td valign='top' style='background-color:white'><a class='btn btn-link' href='/blogers?username="+comments[i].split("#$3histcomma")[0]+"'<span class='glyphicon glyphicon-user' style='background-color:#f0f0f0'>"+comments[i].split("#$3histcomma")[0]+"</span></a></td><td style='border-radius:10px;width:100%; font-size:14px; text-align:justify;padding:10px'>"+comments[i].split("#$3histcomma")[1]+"<br><br><i style='width:100%;font-size:12px;text-align:right' align='right'>"+comments[i].split("#$3histcomma")[2]+"</i></td></tr><tr><td>&nbsp;</td></tr>"    
+        }
+        tableContent+="</table>"
+        document.getElementById('comments'+postId).innerHTML=tableContent;
+      }
+    }
+    http.open("POST", "{% url 'getPostComments' %}", true);
+    http.send(form);
+  }
+  function check_last_scroll(dest){
+   if($(document).scrollTop() + window.innerHeight >= $(document).height()*2/3) {
+      get_more_posts(dest);
+   }
+  }
+function showdeletealert(pid){
+  document.getElementById('okdeletebutton').href='/deletePost?postId='+pid;
+ $('#deletealert').slideDown(0);
+}
+function openPostEditarea(pid, action) {
+  if(action==0){
+    $("#editposttextarea"+pid).slideDown(0);
+  }
+  else{
+    $("#editposttextarea"+pid).slideUp(0);
+  }
+}
+function savededitedpost(pid) {
+  var form= new FormData(document.getElementById("fakeform"));
+  form.append("editposttext", document.getElementById("editposttext"+pid).value);
+  form.append("postId", pid);
+  var http=new XMLHttpRequest();
+  http.onreadystatechange=function(){
+    if(this.readyState == 4 && this.status == 200){
+      location.href="{% url 'blogers' %}";
+    }
+  }
+  http.open("POST", "{% url 'editPostText' %}", true);
+  http.send(form);
+}
+function seemoreText(pid){
+  var form=new FormData(document.getElementById("fakeform"));
+  form.append("pid", pid);
+  var http = new XMLHttpRequest();
+  http.onreadystatechange=function(){
+    if(this.readyState == 4 && this.status == 200){
+      document.getElementById("text"+pid).innerHTML=this.responseText;
+    }
+  }
+  http.open("POST", "{% url 'seemoreText' %}", true);
+  http.send(form)
+}
+function get_more_posts(dest){
+  var old_content=document.getElementById("post_content_divider").innerHTML;
+  var form = new FormData(document.getElementById('fakeform'));
+  form.append('last_post_id',last_post_id);
+  form.append('poster', document.getElementById("poster").value);
+  var more_content="";
+  var http= new XMLHttpRequest();
+  var last_id=0;
+  http.onreadystatechange=function(){
+    if(this.readyState == 4 && this.status == 200){
+     var posts=this.responseText;
+     posts=JSON.parse(posts);
+     var array=new Array();
+     try{
+      array.push(posts["ob1"].split("\t"));
+      array.push(posts["ob2"].split("\t"));
+      array.push(posts["ob3"].split("\t"));
+      array.push(posts["ob4"].split("\t"));
+      array.push(posts["ob5"].split("\t"));
+      }
+    catch(e){
+    }
+     for(var i = 0; i < array.length;i++){
+        var post_text=array[i][0];
+        var post_date=array[i][1];
+        var author=array[i][2];
+        var pid=array[i][3];
+        last_id=pid;
+        var graphCont=array[i][4];
+        graphCont=graphCont.split(";;");
+        var is_graphics=array[i][5];
+        var moreThanOne=array[i][6];
+        var numGraphics=array[i][7];
+        var videoName=array[i][8];
+        var is_video=array[i][9];
+        var is_self=array[i][10];
+        var is_saved=array[i][11];
+        var color=array[i][12];
+        var color_title=array[i][13];
+        var saved_id="";
+        if(dest == "savedPosts"){
+          saved_id=array[i][14];
+            if(saved_id!=""){
+              last_id=saved_id;
+            }
+        }
+        var seemore= array[i][15]
+
+       more_content+="<div class='panel panel-default post_container' style='margin-bottom:10px; margin-top:0px;"
+        +"padding:0%; padding-bottom:5px; padding-top:5px;text-align:justify;'>"
+        +"<table style='width: 100%;'>"
+          +"<tr>"
+            +"<td style='width:80%'>"
+              +"<div style='display: inline;padding:5px; color:"+color+"' title='"+color_title+"'><a href='/"
+              +"blogers?username="+author+"' class='btn' style='color:"+color+"'><span class='glyphicon glyphicon-user'"
+               +"style='font-size:30px;'></span><b>"+author+"</b></a><i style='color:#676767;font-size:12px'><u>"+color_title+"</u></i>" 
+              +"</div>"
+            +"</td>"
+            +"<td style='width:30%;text-align: right'>"
+               +"<div class='dropdown' style='width: 100%!important; display: inline'>"
+                  +"<button class='btn dropdown-toggle' type='button' data-toggle='dropdown' style='background-color:transparent'>";
+                    if (is_self=="True"){
+                      more_content+="Your post"; 
+                    }
+                    else if(is_saved=="True"){
+                      more_content+="Saved post";
+                    }
+                     else{
+                      more_content+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                    }
+                   more_content+="<span class='glyphicon glyphicon-option-vertical'></span></button>"
+                  +"<ul class='dropdown-menu'>";
+                    if(is_self=="True"){
+                      more_content+="<li><button class='btn btn-link' onclick='openPostEditarea("+pid+",0)'>Edit <span class='glyphicon glyphicon-pencil'></span></button></li>"
+                      +"<li><button class='btn btn-link' onclick='showdeletealert("+pid+");'>Delete <span class='glyphicon glyphicon-trash'></span></button></li>";
+                    }
+                    else if(is_saved=="True"){
+                      more_content+="<li><a href='/removeFromSavedPosts?postId="+pid+"'>Remove <span class='glyphicon glyphicon-remove'></span></a></li>";
+                    }
+                    else{
+                      more_content+="<li ><a href='/savePost?postId="+pid+"'>Save <span class='glyphicon glyphicon-pushpin'></span></a></li>";
+                    }
+                  more_content+="</ul>"
+                +"</div>" 
+            +"</td>"
+          +"</tr>"
+        +"</table>"
+        +"<small style='color:#777777;padding:5px'><b>"+post_date+"</b></small>"
+        +"<hr>"
+        +"<p style='padding:10px; align: justify;white-space:pre-wrap;' id='text"+pid+"'>"+post_text;
+        if(seemore=="True")
+          {
+            more_content+="<a href='#' onclick='seemoreText("+pid+")'>See more</a>";
+          }
+        more_content+="</p>"
+        +"<div style='display:none' id='editposttextarea"+pid+"'>"
+          +"<table class='table-responsive' style='width: 100%' style='background-color: white'>"
+            +"<tr>"
+              +"<td colspan='3'>"
+                +"<input type='hidden' name='postId' id='editpostId"+pid+"' value='"+pid+"'>"
+                +"<textarea class='form-control' id='editposttext"+pid+"' name='editposttext'>"+post_text+"</textarea>"
+              +"</td>"
+            +"</tr>"
+            +"<tr>"
+              +"<td>"
+                +"&nbsp;"
+              +"</td>"
+              +"<td>"
+                +"&nbsp;"
+              +"</td>"
+              +"<td align='right'>"
+                +"<div class='btn-group'>"
+                +"<input type='button' value='Save change' class='btn btn-default' onclick='savededitedpost("+pid+")'/>"
+                +"<input type='button' class='btn btn-default' value='Cancel'onclick='openPostEditarea("+pid+",1)'/>"
+              +"</div>"
+              +"</td>"
+            +"</tr>"
+          +"</table>"
+        +"</div>"
+
+        +"<br>";
+        if(is_graphics=="True"){
+        more_content+="<center><a name='hash"+pid+"'>"
+          +"<table class='table-responsive' style='height: 35%; width: 100%;margin-bottom:12px; ' cellspacing='2' >"
+            +"<tr>";
+              if(moreThanOne=="True"){
+              for(var j=1; j<graphCont.length;j++){
+                more_content+="<td style='width: 48%;height: 100%;border: 1px solid #dddddd; padding:0px'><a href='#' name='"+graphCont[j]+"' onclick='displayfullsizeimage("+pid+");'><img src='/static/uploaded_graphics/"+graphCont[j]+"' style='width: 100%;'></a></td>";
+              }
+               more_content+="<td>&nbsp;</td>"
+               +"<td style='width: 48%;height: 100%;border: 1px solid #dddddd; padding:0px' align='center'><a href='#' style='height:80%; width: 100%;border-width:1px' onclick='displayfullsizeimage("+pid+");'><img src='/static/images/seemoreimage.png' height='80' width='80'><br>";
+               if(numGraphics > "1"){
+               more_content+=numGraphics+"More photos";
+             }
+               else{
+               more_content+=numGraphics+"More photo";
+             }
+              
+               more_content+="</div></a></td>";
+          }
+             else{
+                 for(var j=1; j<graphCont.length;j++){
+                 more_content+="<td style='width: 100%;height: 100%;border: 1px solid #dddddd;padding:0px'><a href='#'' name='"+graphCont[j]+"' onclick='displayfullsizeimage("+pid+");'><img src='/static/uploaded_graphics/"+graphCont[j]+"' style='width: 100%'></a></td>";
+              }
+           }
+            more_content+="</tr>"
+          +"</table>"
+        +"</center></a>";
+       }
+        
+        if(is_video=="True"){
+
+          more_content+="<hr><table style='width: 100%; padding:0px;margin-bottom: 10px'><tr><td>"
+          +"<video  controls='controls' width='100%''>"
+          +"<source src='/static/uploaded_videos/"+videoName+"' type='video/mp4'>"
+          +"<source src='/static/uploaded_videos/"+videoName+"' type='video/ogg'>"
+          +"<source src='/static/uploaded_videos/"+videoName+"' type='video/flv'>"
+          +"<source src='/static/uploaded_videos/"+videoName+"' type='video/mkv'>"
+          +"</video>"
+        +"</td></tr></table>";
+
+      }
+
+        more_content+="<hr><table style='width: 100%;' onmouseover='loadLightActivity("+pid+");'>"
+          +"<tr>"
+            +"<td style='width: 33%;text-align: center'><button type='button' class='btn btn-default btn-circle btn-lg btn-circle-green' onclick='switchLight("+pid+",1);'><b><i>Tr <i style='color:#00ff00'>ue</i></i></b></button>&nbsp;&nbsp;&nbsp;<i class='btn btn-link' id='"+pid+"truevalue'></i></td>"
+            +"<td style='width: 33%; text-align: center'></td>"
+            +"<td style='width:33%;text-align: center'><i class='btn btn-link' id='"+pid+"falsevalue'></i>&nbsp;<button type='button' class='btn btn-default btn-circle btn-lg btn-circle-red' onclick='switchLight("+pid+",2);'><b><i>Fa <i style='color:#ff0000'>lse</i></i></b></button></td>"
+          +"</tr>"
+        +"</table>"
+        +"<br>"
+        +"<div style='width:100%;display: none; padding-left:10px; padding-right: 10px' id='writeCommentpannel"+pid+"'>"
+        +"<form>"
+          +"<table class='table-responsive' style='width: 100%'>"
+            +"<tr>"
+              +"<td class='btn-group' style='width: 100%'>"
+                +"<input type='hidden' id='postId"+pid+"' value='"+pid+"'>"
+                +"<input type='hidden' name='lighttype' id='lighttype"+pid+"'>"
+                +"<textarea class='form-control' id='comment"+pid+"' placeholder='Write your comment' style='height: 40px;border-radius: 10px'></textarea>"
+              +"</td>"
+              +"<td style='width: 10%''>"
+                +"<input type='button'  class='btn btn-info' value='Comment' onclick='writeComment("+pid+")'>"
+              +"</td>"
+            +"</tr>"
+          +"</table>"
+        +"</form>"
+        +"</div>"
+        +"<button class='btn btn-link' onclick='openComments("+pid+")'>Comments <span class='glyphicon glyphicon-comment'></span></button>"
+        +"<div class='panel'style='width: 100%; border-left: 1px solid blue;display: none; padding-left:10%' id='comments"+pid+"'>"
+        +"</div>"
+      +"</div>";
+      
+    }
+    var new_content=old_content+more_content;
+    document.getElementById("post_content_divider").innerHTML=new_content;
+    last_post_id=last_id;
+  }
+}
+  if(dest == "get_more_posts"){
+     http.open("POST","{% url 'get_more_posts' %}", true);
+  }
+  else if(dest == "savedPosts"){
+     http.open("POST","{% url 'savedPosts' %}", true);
+  }
+  else if(dest="get_more_bloger_posts"){
+     http.open("POST","{% url 'get_more_bloger_posts' %}", true);
+  }
+  http.send(form);
+}
+</script>
+</head>
+<body>
+{% load static %}
+<form id="fakeform">{% csrf_token %}</form>
+<div style="width: 100%;" id="post_content_divider">
+{% for post in posts %}
+{% if post.is_post %}
+      <script>
+        var lastId = "{{post.saved_id}}"
+        var last_post_id="{{post.saved_id}}"
+        
+        if(lastId!="null")
+          last_post_id=lastId
+        else
+          last_post_id="{{post.pid}}"
+        document.getElementById("last_post_id").value=last_post_id;
+      </script>
+      <div class="panel panel-info post_container" style="margin-bottom:10px; margin-top:0px; padding:0%;padding-bottom:5px; padding-top:5px;text-align:justify;">
+        <table style="width: 100%;">
+          <tr>
+            <td style="width:80%">
+              <div style="display: inline;padding:5px; color:{{post.light}}" title="{{post.color_title}}"><a href="/blogers?username={{post.author}}" class="btn" style="color:{{post.light}}"><span class="glyphicon glyphicon-user" style="font-size:30px;"></span><b> {{post.author}} </b></a>
+              <i style="color: #676767;font-size: 12px"><u>({{post.color_title}})</u></i>  
+              </div>
+            </td>
+            <td style="width:30%;text-align: right">
+               <div class="dropdown" style="width: 100%!important; display: inline">
+                  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="background-color:transparent"> 
+                    {% if post.is_self  %}
+                      Your post 
+                    {% elif post.is_saved %}
+                      Saved post 
+                    {% else %}
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    {% endif %}
+                    <span class="glyphicon glyphicon-option-vertical"></span></button>
+                  <ul class="dropdown-menu">
+                    {% if post.is_self %}
+                      <li><button class="btn btn-link" type="button" onclick="$('#editposttextarea{{post.pid}}').slideDown(0);">Edit <span class="glyphicon glyphicon-pencil"></span></button></li>
+                      <li><button class="btn btn-link"  onclick="document.getElementById('okdeletebutton').href='/deletePost?postId={{post.pid}}'; $('#deletealert').slideDown(0);">Delete <span class="glyphicon glyphicon-trash"></span></button></li>
+                    {% elif post.is_saved %}
+                      <li><a class="btn btn-link" href="/removeFromSavedPosts?postId={{post.pid}}">Remove <span class="glyphicon glyphicon-remove"></span></a></li>
+                    {% else %}
+                      <li ><a href="/savePost?postId={{post.pid}}" class="btn btn-link">Save <span class="glyphicon glyphicon-pushpin"></span></a></li>
+                    {% endif %}
+                  </ul>
+                </div>  
+            </td>
+          </tr>
+        </table>
+        <small style="color:#777777;padding:5px"><b>{{post.post_date}}</b></small>
+        <hr>
+        <p style="padding:10px; white-space: pre-wrap;text-indent: 0px;" id="text{{post.pid}}">{{post.post_text|safe}}{% if post.seemore %}<button class="btn btn-link" onclick="seemoreText({{post.pid}})">See more</button>{% endif %}</p>
+        
+        <div class="panel panel-default" style="display:none;" id="editposttextarea{{post.pid}}">
+          <div class="panel-heading">
+          <form action="{% url "editPostText" %}" method="POST">{% csrf_token %}
+          <table class="table-responsive" style="width: 100%" style="background-color: white">
+            <tr>
+              <td colspan="3">
+                <input type="hidden" name="postId" id="editpostId" value="{{post.pid}}">
+                <textarea class="form-control" id="editposttext" name="editposttext">{{post.post_text}}</textarea>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                &nbsp;
+              </td>
+              <td>
+                &nbsp;
+              </td>
+              <td align="right">
+              <div class="btn-group">
+                <input type="submit" name="" value="Save change" class="btn btn-default"/>
+                <input type="button" class="btn btn-default" value='Cancel' onclick="$('#editposttextarea{{post.pid}}').slideUp(0);"/>
+              </div>
+              </td>
+            </tr>
+          </table>
+        </form>
+
+        </div>
+        <div class="panel-body"></div>
+      </div>
+        <br>
+        {% if post.is_graphics %}
+        <center>
+          <a name="hash{{post.pid}}">
+          <table class="table-responsive" style="height: 35%; width: 100%;margin-bottom:12px; " cellspacing="2" >
+            <tr>
+              {% if post.moreThanOne %}
+              {% for graphics in post.graphCont %}
+                <td style="width: 48%;height: 100%;border: 1px solid #dddddd; padding:0px"><a href="#" name="{{graphics}}" onclick="displayfullsizeimage({{post.pid}});"><img src="/static/uploaded_graphics/{{graphics}}" style="height:; width: 100%;"></a></td>
+              {% endfor %}
+               <td>&nbsp;</td>
+               <td style="width: 48%;height: 100%;border: 1px solid #dddddd; padding:0px" align="center"><a href="#" style="height:80%; width: 100%;border-width:1px" onclick="displayfullsizeimage({{post.pid}});"><img src="{% static "images/seemoreimage.png" %}" height="80" width="80"><br>
+               {% if post.numGraphics > 1 %}
+               {{post.numGraphics}} More photos
+               {% else %}
+               {{post.numGraphics}} More photo
+               {% endif %}
+               </div></a></td>
+              {% else %}
+                 {% for graphics in post.graphCont %}
+                 <td style="width: 100%;height: 100%;border: 1px solid #dddddd;padding:0px"><a href="#" name="{{graphics}}" onclick="displayfullsizeimage({{post.pid}});"><img src="/static/uploaded_graphics/{{graphics}}" style="width: 100%"></a></td>
+              {% endfor %}
+              {% endif %}
+            </tr>
+          </table>
+        </a>
+        </center>
+        {% endif %}
+        <hr>
+        {% if post.is_video %}
+          <table style="width: 100%; padding:0px;margin-bottom: 10px"><tr><td>
+          <video  controls="controls" width="100%">
+          <source src="/static/uploaded_videos/{{post.videoName}}" type="video/mp4">
+          <source src="/static/uploaded_videos/{{post.videoName}}" type="video/ogg">
+          <source src="/static/uploaded_videos/{{post.videoName}}" type="video/flv">
+          <source src="/static/uploaded_videos/{{post.videoName}}" type="video/mkv">
+          </video>
+        </td></tr></table>
+        <hr>
+        {% endif %}
+        <table style="width: 100%;" onmouseover="loadLightActivity({{post.pid}});">
+          <tr>
+            <td style="width: 33%;text-align: center"><button type="button" class="btn btn-default btn-circle btn-lg btn-circle-green" onclick="switchLight('{{post.pid}}','green');"><b><i>Tr <i style="color:#00ff00">ue</i></i></b></button>&nbsp;&nbsp;&nbsp;<i class="btn btn-link" id="{{post.pid}}truevalue"></i><div class="btn-round" style="width:80px;display: inline" id=""></div></td>
+            <td style="width: 33%; text-align: center"></td>
+            <td style="width:33%;text-align: center"><div class="btn-round" style="width:80px;display: inline" id=""></div><i class="btn btn-link" id="{{post.pid}}falsevalue">&nbsp;</i><button type="button" class="btn btn-default btn-circle btn-lg btn-circle-red" onclick="switchLight('{{post.pid}}','red');"> <b><i>Fa <i style="color:red">lse</i></i></b></button></td>
+          </tr>
+        </table>
+        
+        <div style="width:100%;display: none; padding-left:10px; padding-right: 10px" id="writeCommentpannel{{post.pid}}">
+          <br>
+        <form id="commentData{{post.pid}}">{% csrf_token %}
+          <table class="table-responsive" style="width: 100%">
+            <tr>
+              <td class="btn-group" style="width: 100%">
+                <input type="hidden" id="postId{{post.pid}}" value="{{post.pid}}">
+                <input type="hidden" name="lighttype" id="lighttype{{post.pid}}">
+                <textarea class="form-control" id="comment{{post.pid}}" placeholder="Write your comment" style="height: 40px;border-radius: 10px"></textarea>
+              </td>
+              <td style="width: 10%">
+                <input type="button"  class="btn btn-info" name="" value="Comment" onclick="writeComment({{post.pid}})"> 
+              </td>
+            </tr>
+          </table>
+        </form>
+        </div>
+        <button class="btn btn-link" onclick="openComments({{post.pid}})">Comments <span class="glyphicon glyphicon-comment glyphicon-sm"></span></button>
+        <div class="panel" style="padding-left:10%;width: 100%; border-left: 1px solid blue;display: none;" id="comments{{post.pid}}">
+        </div>
+      </div>
+  {% else %}
+  {% if post.text %}
+  <h4 style="color:#8888AA">Sorry! No result found for your search.</h4>
+  {% else %}
+  <div class="panel panel-default" style="margin-bottom:10px; margin-top:0px; padding:0%;padding-bottom:5px; padding-top:5px;text-align:justify;border:1px solid #0000ff44;border-radius: 4px" >
+        <table style="width: 100% ">
+          <tr>
+            <td style="width:80%;">
+              <div style="display: inline;padding:5px;"><a href="/blogers?username={{post.author}}" class="btn"><span class="glyphicon glyphicon-user" style="font-size:30px;"></span><b> {{post.author}} </b></a>
+                  
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+  {% endif %}
+    {% endif %}
+    {% endfor %}
+    </div>
+    
+</body>
+</html>

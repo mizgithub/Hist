@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>Hist - Sign up</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-min.css" %} ">
+	<style type="text/css">
+		.fixednav {
+		  overflow: hidden;
+		  position: fixed;
+		  top: 0;
+		  width: 100%;
+		  z-index: 1
+		}
+		.main {
+		  z-index: 0
+		  padding: 16px;
+		  margin-top: 4%;
+		  height:87%; 
+		  background-color:white;/* Used in this example to enable scrolling */
+		}
+		.btn{
+			border-radius: 0px;
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-default fixednav" style="background-color: #5795c5">
+  <div class="container-fluid">
+  	<ui class="nav navbar-nav">
+    <li class="" style="padding:0px; background-color: #5795c5; border-width: 0px; border-radius: 0px">
+        <a class="navbar-brand" style=";color:white;padding: 5px" ><span class="glyphicon glyphicon-leaf" style="font-size: 30px;padding: 3px;"></span></a>
+      </li>
+  </ui>
+  </div>
+</nav>
+<div class="row main" style="padding-top: 50px;text-align: center">
+	
+	
+	<center>
+	<div class="panel" style="width: 300px">
+		<h3 style="text-align: center">Confirm your <b>HiSt</b> account</h3>
+		<hr style="border:0px">
+		<div class="panel panel-success">
+		<h3>Your user name is <b style="color:#6666dd">{{username}}</b>. Use this user name to login.</h3></div>
+		<h4>If the code is not sent to your phone click <a href="#">Resend</a></h4><hr>
+		<h5>The code is 6 Digit number start with letter <b>H</b></h5>
+		<hr>
+		<form method="POST" action="{% url "performAccountConfirmation" %}" class="navbar-form navbar-left" >{% csrf_token %}
+			<table class="table-responsive table-condensed">
+			<tr>
+				<td>
+					<input type="text" name="confcode" class="form-control" placeholder="Confrimation code" style="font-size: 20px">
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<input type="submit" name="Submit" class="btn btn-block" style="background-color: #5795c5;color:white" value="Confirm"/>
+				</td>
+			</tr>
+			<tr>
+				<td style="color: red;text-align: center">
+					{{message}}
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</center>
+</div>
+</body>
+</html>

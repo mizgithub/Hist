@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>Hist - Login</title>
+	<link rel="shortcut-icon" src="{% static "images/histIcon.png" %}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-min.css" %}">
+	<style type="text/css">
+		.fixednav {
+		  overflow: hidden;
+		  position: fixed;
+		  top: 0;
+		  width: 100%;
+		  z-index: 1
+		}
+		.main {
+		  z-index: 0
+		  padding: 16px;
+		  margin-top: 4%;
+		  height:87%; 
+		  width: 100%; 
+		  background-color:white;/* Used in this example to enable scrolling */
+		}
+		.btn-getstarted:hover{
+			background-color:#3573a3 !important;
+		}
+	</style>
+</head>
+<body>
+	<div  style="position: fixed; padding-top: 1%; padding-left: 70%; z-index: 1000;color: red;font-size: 16px">{{message}}</div>
+<nav class="navbar navbar-inverse fixednav" style="background-color:#5795c5; border-width: 0px;border-radius: 0px">
+  <div class="container-fluid">
+
+    <form class="navbar-form navbar-right" method="POST" action="{% url "login" %}" id="loginForm">{% csrf_token%}
+    	<input type="text" name="username" class="form-control" placeholder="Phone number" />&nbsp;&nbsp;
+    	<input type="password" name="password" class="form-control" placeholder="password" />
+    	<input type="submit" class="btn" style="border-radius: 0px;height: 32px; background-color: #4684b4;color:white; font-weight: bold" value=" Login">
+    	
+    </form>
+
+  </div>
+</nav>
+
+<div class="row main" style="padding-top: 50px;text-align: center">
+	<span class="glyphicon glyphicon-leaf" style="font-weight: bold; font-size: 80px;color:#5795c5">HiSt</span>
+	
+	<center><hr style="margin-bottom: 100px;width: 400px;color: white;height: 0px"></center>
+	<h1 style="text-decoration: bold; color: #222277">Hide identity and Support truth</h1>
+	<h3>Let's make the relation suitable for each other and for all living kind!</h3>
+	<center><hr style="margin-top:6px;width: 700px;"></center>
+	<a href="{% url "createAccount" %}" class="btn btn-getstarted" style="background-color:#5795c5;color:white;border-radius: 0px;width: 400px;"> <h3>Create HiSt Account</h3></a>
+	<hr>
+</div>
+
+</body>
+</html>

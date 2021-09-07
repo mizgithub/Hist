@@ -1,0 +1,148 @@
+<!Doctype="html" encoding="utf-8">
+{% load static %}
+<html>
+<head>
+  <title>Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-min.css" %}"/>
+  <script type="text/javascript" src="{% static "bootstrap/js/jquery.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "autosize.js" %}"></script>
+<style type="text/css">
+body {margin:0; background-color:#E7E4F1;}
+.post-panel, .left-panel, .right-panel,.main,{ background-color:transparent; }
+hr{
+  margin: 5px;
+}
+</style>
+<script type="text/javascript">
+  
+  function loadDate(){
+    var date=new Date();
+    var day=date.getDate();
+    var month=date.getMonth()+1;
+    var year=date.getFullYear();
+    document.getElementById("day").innerHTML=day;
+    document.getElementById("month").innerHTML=month;
+    document.getElementById("year").innerHTML=year;
+
+  }
+  function senddata(){
+    var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              
+                
+            }
+        };
+        http.open("GET", "get_data", true);
+        http.send();
+  }
+  function follow_unfollow(bloger){
+    var form = new FormData(document.getElementById('fakeform'));
+    form.append("bloger", bloger);
+    isFollowed = document.getElementById(bloger).innerHTML;
+    var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                if(this.responseText == "ok"){
+                  if(isFollowed == "Follow"){
+                    document.getElementById(bloger).innerHTML = "Unfollow";
+                  }
+                  if(isFollowed == "Unfollow"){
+                    document.getElementById(bloger).innerHTML = "Follow";
+                  }
+                }
+            }
+        };
+    var url="/follow/";
+    if(isFollowed == "Unfollow"){
+      url="/unfollow/";
+    }
+    http.open("POST", url, true);
+    http.send(form);
+  }
+</script>
+</head>
+<body onload="loadDate()" onscroll="check_last_scroll('get_more_posts')">
+  <form id="fakeform">{% csrf_token %}</form>
+  <a name="top"></a>
+  <input type="hidden" id="poster" value="">
+  {% include "navbar_view.html" %}
+<hr>
+    <div class="left-panel" style="position:fixed;margin-top:50px; margin-left:5px;overflow:hidden;margin-left:0px;margin-right:10px;padding-left: 20px; border-radius: 0px; border-right: 0px;border-color:transparent;width:20%;">
+      <hr style="margin-left: 100px">
+      <table class="table-responsive table-condensed" style="margin-left: 100px">
+        <tr><td>
+           <a href="#" onclick="$('#newPostPanel').slideDown(0)"><span class="glyphicon glyphicon-plus"></span> Add post</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+          <a href="/blogers?username={{username}}"><span class="glyphicon glyphicon-user"></span> Posts from you</a>
+          </td>
+        </tr>
+      </table> 
+    </div>
+    <div class="post-panel"  style="position:absolute; margin-top:50px; margin-left:25%;border-radius: 0px;border-color:transparent;width: 38%; overflow:auto;">
+      {% include "newpostpan.html" %}
+      {% for hister in histers %}
+        <div class="panel panel-default" style="margin-top: 5px; margin-bottom: 0px">
+          <table class="table">
+            <tr><td><a href="/blogers?username={{hister.username}}" class="btn btn-link"><span class="glyphicon glyphicon-user"></span> {{hister.username}}</a>
+              <i style="font-size:12px">{{hister.followers}} followers</i>
+            </td>
+            
+              {% if hister.isGenuine %}
+              <td style="font-size: 12px;background-color: #ccffcc">
+              <i>Genuine Hister</i>
+              </td>
+              {% endif %}
+            
+            <td style="font-size:12px">
+              {% if hister.isFollowed %}
+                <i>Followed</i>
+              {% else %}
+              <button class="btn btn-default" id="{{hister.username}}" onclick="follow_unfollow(this.id)">Follow</button>
+              {% endif %}
+            </td>
+            </tr>
+          </table>
+        </div>
+        <script>
+          last_hister_id = "{{hister.idnum}}"
+        </script>
+      {% endfor %}
+      <form method="POST" action="{% url 'Histers_In_your_region' %}">{% csrf_token %}
+        <input type="hidden" name="last_hister_id" id="last_hister_id">
+        <input type="submit" name="" class="btn btn-link" value="See more">
+      </form>
+      <script>
+        document.getElementById("last_hister_id").value = last_hister_id;
+      </script>
+   </div>
+   
+    <div class="right-panel" style="position:fixed; margin-top:50px; margin-left:65%;padding-left: 5px;height: 100%; border-radius: 0px; border-left: 0px;width: 15%; z-index: 1000">
+      <hr style=";margin-left: 10px; padding: 0px">
+      <table style="margin-left: 10px; font-size:14px;background-color: #eeeeee; padding: 10px;width: 100%">
+        <tr><td class="btn-default" style="height: 30px; border-radius: 5px; padding:5px">Top genuine Histers</td></tr>
+         {% for bloger in genuineBlogers %}
+        <tr>
+          <td style=""><a href="/blogers?username={{bloger.username}}" class="btn btn-link"><span class="glyphicon glyphicon-user"></span>{{bloger.username}}<i style="color:#676767; font-size: 11px"> {{bloger.followers}} followers</i></a></td>
+        </tr>
+        {% endfor %}
+        <tr><td><a href="{% url 'allGenuineBlogers' %}" class="btn btn-link">See all</a></td></tr>
+      </table>
+      <hr style=";margin-left: 10px; padding: 0px">
+      <table style="margin-left: 10px; font-size:14px;"><tr><td>
+        <a href="{% url 'Histers_In_your_region' %}" class="btn btn-link"><span class="glyphicon glyphicon-screenshot"></span> Histers in your region</a></td></tr></table>
+    </div>
+    <div class="advert-panel" style="position: fixed; margin-top: 50px; margin-left: 85%;width: 150px">
+    <div style="font-size: 10px">Advertizement</div>
+    
+     
+     
+    </div>
+</body>
+</html>

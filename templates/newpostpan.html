@@ -1,0 +1,32 @@
+{% load static %}
+<div class="panel panel-default" style="position:fixed;margin-top:0px;text-align: justify;display:none;width:38%;border:1px solid #aaaaee;z-index: 10;" id="newPostPanel">
+<div class="panel-heading">
+  <table style="width: 100%;">
+          <tr>
+            <td style="width:80%;">
+              <div style="display: inline;padding:5px;"><a href="#" class="btn"><span class="glyphicon glyphicon-user img-circle" style="font-size:20px;"></span><b> {{username}} &nbsp;New post</b></a>  
+              </div>
+            </td>
+            <td style="width: 20%" align="right" valign="top"><button class="btn"  onClick="$('#newPostPanel').slideUp(0);" style="background-color: transparent;"><span class="glyphicon glyphicon-remove"></span></button></td>
+          </tr>
+        </table>
+</div>
+<div class="panel-body">
+        <form method="POST" action="{% url "newpost" %}" class="form-group" id="newPostForm" enctype="multipart/form-data">{% csrf_token %}
+          <br>
+          <textarea class="form-control" name="text" placeholder="Start writing ..." style="white-space:pre-wrap;"></textarea>
+          <br>
+          <table class="" style="width:100%">
+            <tr style=";height: 40px"><td style="width:100%;padding-top:2px;"align="center">
+          <div class="btn-group " style="height: 20px;text-align: center" align="center">
+            <label for="img-upload" class="btn btn-default" title="Upload images" style="font-weight: bold;color:#09A4DF;font-size: 12px;border-radius: 20px"><span class="glyphicon glyphicon-picture" style="font-size:14px"></span> Add photo</label>
+            <input type="file" id="img-upload" name="images" class="btn btn-default btn" style="display: none" accept="image/*" multiple/>
+            <label for="vid_upload" class="btn btn-default" title="Upload video" style="font-weight: bold;color:#09A4DF;font-size:12px; border-radius: 20px" ><span class="glyphicon glyphicon-facetime-video" style="font-size: 14px"></span> Add video</label>  
+            <input type="file" id="vid_upload" name="vid" class="btn btn-default btn" style="display: none" accept="video/*">
+            <input type="submit" class="btn btn-default" value="&nbsp;&nbsp;Post&nbsp;&nbsp;" style="font-weight: bold;color:#09A4DF;border-radius: 20px">
+          </div>
+        </td></tr></table>
+        </form>
+      </div>
+    </div>
+      

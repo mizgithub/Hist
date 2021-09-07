@@ -1,0 +1,235 @@
+<!Doctype="html" encoding="utf-8">
+{% load static %}
+<html>
+<head>
+  <title>
+    {% if is_you %}
+      Posts of {{profile.username}}
+    {% else %}
+    Posts of {{profile}}
+    {% endif %}
+</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-min.css" %}"/>
+  <script type="text/javascript" src="{% static "bootstrap/js/jquery.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "autosize.js" %}"></script>
+  <style>
+body {margin:0;background-color:#E7E4F1;}
+.right-panel{
+  padding-left: 5px;
+  height: 100%; 
+  border-radius: 0px;
+  border-left: 0px;
+}
+.left-panel{
+  margin-left:0px;
+  margin-right:10px;
+  padding-left: 20px;
+  border-radius: 0px; 
+  border-right: 0px;
+}
+.post-panel, .left-panel, .right-panel, .main{ background-color:transparent; }
+hr{
+  margin: 5px;
+}
+</style>
+<script type="text/javascript">
+  function loadDate(){
+    var date=new Date();
+    var day=date.getDate();
+    var month=date.getMonth()+1;
+    var year=date.getFullYear();
+    document.getElementById("day").innerHTML=day;
+    document.getElementById("month").innerHTML=month;
+    document.getElementById("year").innerHTML=year;
+  }
+  function senddata(){
+    var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              
+                
+            }
+        };
+        http.open("GET", "get_data", true);
+        http.send();
+  }
+  function follow_unfollow(bloger){
+    var form = new FormData(document.getElementById('fakeform'));
+    form.append("bloger", bloger);
+    isFollowed = document.getElementById(bloger).innerHTML;
+    var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                if(this.responseText == "ok"){
+                  if(isFollowed == "Follow"){
+                    document.getElementById(bloger).innerHTML = "Unfollow";
+                  }
+                  if(isFollowed == "Unfollow"){
+                    document.getElementById(bloger).innerHTML = "Follow";
+                  }
+                }
+            }
+        };
+    var url="/follow/";
+    if(isFollowed == "Unfollow"){
+      url="/unfollow/";
+    }
+    http.open("POST", url, true);
+    http.send(form);
+  }
+</script>
+</head>
+<body onload="loadDate()" onscroll="check_last_scroll('get_more_bloger_posts')">
+ <a name="top"></a>
+  {% include "navbar_view.html" %}
+  {% include "fullsizeimageview.html" %}
+  {% include 'deletePostWizard.html' %}
+  {% if is_you %}
+      <input type="hidden" id="poster" value="{{profile.username}}">
+  {% else %}
+      <input type="hidden" id="poster" value="{{profile}}">
+  {% endif %}
+  <div style="position: fixed; margin-top: 550px;margin-left:200px;z-index: 1000;background-color: #E9E8F2">
+  <a href="#top" class="btn btn-default" style="height: 45px; width: 45px; border-radius: 50%;text-align: center; padding: 7px;box-shadow: 1px 1px 1px 0px #999999; border-color:white;" title="Back to top"><span class="glyphicon glyphicon-hand-up" style="font-size:25px;color: #09A4DF"></span></a>
+  </div>
+    <hr>
+     <div class="left-panel" style="position:fixed;margin-top:50px; margin-left:5px;overflow:hidden;margin-left:0px;margin-right:10px;padding-left: 20px; border-radius: 0px; border-right: 0px;border-color:transparent;width:20%;">
+      <hr style="margin-left: 100px">
+      <table class="table-responsive table-condensed" style="margin-left: 100px">
+        <tr><td>
+           <a href="#" onclick="$('#newPostPanel').slideDown(0)"><span class="glyphicon glyphicon-plus"></span> Add post</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+          <a href="/blogers?username={{username}}"><span class="glyphicon glyphicon-user"></span> Posts from you</a>
+          </td>
+        </tr>
+      </table>
+      <hr style="margin-left: 100px;">
+      
+     <table style="margin-left: 100px; font-size:14px; width: 100%">
+        <tr><td class="btn-default btn-block" style="height: 30px; border-radius: 5px; padding:5px;"> Filter posts </td></tr>
+      </table>
+     <form action="{% url 'changeColorSetting' %}" method="POST" style="margin-left: 100px; background-color: #eeeeee; padding: 10px">{% csrf_token %}
+        <input type="hidden" name="url" value="home">
+      <h6>The color tells the class of the post</h6><hr>
+      <div class="checkbox" style="height:40px;">
+        <label><input type="checkbox" name="color" value="green" {{green}}> <span class="glyphicon glyphicon-user" style="color:#00ff00"></span><i class=""> True classified post</i></label>
+      </div>
+      <div class="checkbox">
+        <label><input type="checkbox" name="color" value="blue" {{blue}}> <span class="glyphicon glyphicon-user" style="color:#0000ff"></span><i class=""> Unclassified post</i></label>
+      </div>
+      <div class="checkbox">
+        <label><input type="checkbox" name="color" value="red" {{red}}> <span class="glyphicon glyphicon-user" style="color:#ff0000"></span><i class=""> Flase classified post</i></label>
+      </div>
+      <button  type="submit" class="btn btn-link" style="">Filter<span class="glyphicon glyphicon-filter"></span></button>
+    </form>
+    </div>
+     <div class="post-panel"  style="position:absolute; margin-top:50px; margin-left:24%;border-radius: 0px;border-color:transparent;width: 38%; overflow:auto;">
+      {% include "newpostpan.html" %}
+        <div class="panel panel-default" style="height:;padding:20px">
+          {% if is_you %}
+          <table class="table-condensed table-responsive" style="width:100%;border-width: 0px">
+          <tr><td rowspan="4">
+          <span class="glyphicon glyphicon-user" style="font-size:100px"></span>
+          <b style="font-size:40px">{{profile.username}}</b></td>
+          <td>
+              Phone N<u>o</u>.
+          </td>
+          <td>
+            {{profile.phonenumber}}
+            <a href="#" onclick="$('#phoneeditbutton').slideUp(0);$('#phonefield').slideDown(0);" id="phoneeditbutton"><span class="glyphicon glyphicon-pencil" style="font-size:12px"></span></a>
+            <input type="number" class="form-control" name="phone" id="phonefield" style="display: none">
+          </td></tr>
+          <tr><td>
+            Sex 
+          </td>
+          <td>
+            {{profile.sex}}
+            <a href="#" onclick="$('#sexeditbutton').slideUp(0);$('#sexfield').slideDown(0);" id="sexeditbutton"><span class="glyphicon glyphicon-pencil" style="font-size:12px"></span></a>
+            <select name="sex" style="display: none" class="form-control" id="sexfield">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </td></tr>
+          <tr><td>
+            Birth Date
+          </td>
+          <td>
+            {{profile.birthdate}} <a href="#" onclick="$('#birthdateeditbutton').slideUp(0);$('#birthdatefield').slideDown(0);" id="birthdateeditbutton"><span class="glyphicon glyphicon-pencil" style="font-size:12px"></span></a>
+            <input type="date" class="form-control" name="birthdate" id="birthdatefield" style="display: none">
+          </td></tr>
+          <tr><td colspan="2">
+            <div class="btn-group btn-block"><input type="submit" class="btn btn-default" name="" value="Save changes"><button class="btn btn-default" onclick="$('#phonefield').slideUp(0);$('#sexfield').slideUp(0);$('#birthdatefield').slideUp(0);$('#phoneeditbutton').slideDown(0); $('#sexeditbutton').slideDown(0); $('#birthdateeditbutton').slideDown(0);">Cancel</button></td></tr>
+          <tr><td>
+            {% if profile.isGenuine %}
+            Genuine Hister
+            {% endif %}
+          </td></tr>
+        </table>
+        {% else %}
+          <table class="table-responsive">
+          <tr><td rowspan="3">
+          <span class="glyphicon glyphicon-user" style="font-size:100px"></span>
+          <b style="font-size:40px">{{profile}}</b></td>
+          <td>
+             
+          </td></tr>
+          <tr><td>
+            
+          </td></tr>
+          <tr><td>
+
+          </td></tr>
+          <tr>
+            <td>{% if isGenuine %}
+           Genuine Hister
+           {% endif %}</td>
+            <td>
+            
+            <button class="btn btn-default btn-block" id="{{profile}}" onclick="follow_unfollow(this.id)">{{isFollowed}}</button>
+          </td></tr>
+        </table>
+        {%  endif %}
+        </div>
+        <div class="panel panel-default" style="margin-bottom: 10px;margin-top: 0px;border-radius: 0px;padding-left: 10px;color:#888888">
+          {% if is_you %}
+          <h3>Your posts</h3>
+          {% else %}
+          <h3>Posts of {{profile}}</h3>
+          {% endif %}
+        </div>
+          
+          {% include "post_view.html" %}
+   </div>
+   
+     <div class="right-panel" style="position:fixed; margin-top:50px; margin-left:65%;padding-left: 5px;height: 100%; border-radius: 0px; border-left: 0px;width: 15%; z-index: 1000">
+      <hr style=";margin-left: 10px; padding: 0px">
+      <table style="margin-left: 10px; font-size:14px;background-color: #eeeeee; padding: 10px;width: 100%">
+        <tr><td class="btn-default" style="height: 30px; border-radius: 5px; padding:5px">Top genuine Histers</td></tr>
+         {% for bloger in genuineBlogers %}
+        <tr>
+          <td style=""><a href="/blogers?username={{bloger.username}}" class="btn btn-link"><span class="glyphicon glyphicon-user"></span>{{bloger.username}}<i style="color:#676767; font-size: 11px"> {{bloger.followers}} followers</i></a></td>
+        </tr>
+        {% endfor %}
+        <tr><td><a href="{% url 'allGenuineBlogers' %}" class="btn btn-link">See all</a></td></tr>
+      </table>
+      <hr style=";margin-left: 10px; padding: 0px">
+      <table style="margin-left: 10px; font-size:14px;"><tr><td>
+        <a href="{% url 'Histers_In_your_region' %}" class="btn btn-link"><span class="glyphicon glyphicon-screenshot"></span> Histers in your region</a></td></tr></table>
+    </div>
+    <div class="advert-panel" style="position: fixed; margin-top: 50px; margin-left: 85%;width: 150px">
+    <div style="font-size: 10px">Advertizement</div>
+    
+     
+    </div>
+</div>
+<script>
+     autosize(document.querySelectorAll('textarea'));
+      </script>
+</body>
+</html>

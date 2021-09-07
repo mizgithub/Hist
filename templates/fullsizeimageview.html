@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style type="text/css">
+  </style>
+<script type="text/javascript">
+  var slideIndex=0;
+  function displayfullsizeimage(post_id){
+   slideIndex=0;
+
+    $("#fullsizeimagepanel").slideDown(0);
+
+    var form=new FormData(document.getElementById('fakeform'));
+    form.append("post_id",post_id);
+    var http= new XMLHttpRequest();
+    http.onreadystatechange=function() {
+
+    if(this.readyState == 4 && this.status == 200) {
+      var images=this.response.split(";");
+      var string="<center><table class='table-responsive' style='height:100%;width:100%;' valign='center'><tr>";
+      if((images.length)-1>1){
+        string+="<td style='width:5%;' align='right' valign='middle'><button class='btn' style='color:#eeeeee;background-color:transparent;font-size:25px;display:inline;'><span class='glyphicon glyphicon-menu-left' onclick='plusSlid("+post_id+",-1);'></span></button></td>";
+      }
+      
+      string+="<td style='height:600px;width:90%;background-color:transparent' align='center' align='middle'>";
+      for(var i=0; i<images.length-1;i++){
+        string+="<img src='/static/uploaded_graphics/"+images[i]+"' class='"+post_id+"imageSlide' style='max-height:100%;max-width:100%;vertical-align:middle' valign='middle' />";
+      }
+      string+="</td>";
+      if((images.length)-1>1){
+
+        string+="<td style='width:5%;' align='left' valign='middle'><button class='btn' style='color:#eeeeee;background-color: transparent;font-size:25px;display:inline'><span class='glyphicon glyphicon-menu-right' onclick='plusSlid("+post_id+",+1);'></span></button></td>";
+      }
+      string+="</tr></table></center>";
+      document.getElementById("imagescreenpanel").innerHTML=string;
+      location.hash="#hash"+post_id;
+      showSlid(post_id,0);
+    }
+  }
+  
+  http.open("POST","{% url "getallImages" %}", true);
+  http.send(form);
+    //var imageurl="/static/uploaded_graphics/"+imagename;
+    //document.getElementById("fullsizeimage").src=imageurl
+  }
+  function plusSlid(post_id,n){
+    showSlid(post_id,slideIndex+=n);
+  }
+  function showSlid(post_id,n){
+    var x=document.getElementsByClassName(post_id+"imageSlide");
+   
+    if(n>=x.length){
+      slideIndex=0;
+    }
+    if(n<0){
+      slideIndex=x.length-1;
+    }
+    for(var i=0;i<x.length;i++){
+      x[i].style.display="none";
+    }
+    x[slideIndex].style.display="block";
+  }
+</script>
+</head>
+<body>
+
+{% load static %}
+
+<div class="panel" style="position: fixed; margin-top:-5px;margin-left: 0%;width:100%; height: 100%;z-index: 4000;display: none; background-color:#000000f0;vertical-align: middle; border-radius: 0px;background-attachment: fixed;" id="fullsizeimagepanel" valign="middle">
+  <div class="row" style="width:100%;height: 100%">
+    <div class="col-sm-3 panel-default" onclick="$('#fullsizeimagepanel').slideUp(0);">
+      <div style="width: 100%; height: 100%" onclick="$('#fullsizeimagepanel').slideUp(0);">&nbsp;</div>
+    </div>
+    <div class="col-sm-6" id="imagescreenpanel" style="width:50%;height:100%;text-align: center;" align="center">
+      
+    </div>
+    <div class="col-sm-3" onclick="$('#fullsizeimagepanel').slideUp(0);" align="right">
+      <div style="width: 100%; height: 100%" onclick="$('#fullsizeimagepanel').slideUp(0);">
+        <button class="btn" onclick="$('#fullsizeimagepanel').slideUp(0);" style="background-color: transparent;color:white" onclick="$('#fullsizeimagepanel').slideUp(0);"><span class="glyphicon glyphicon-remove"></span></button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+</body>
+</html>

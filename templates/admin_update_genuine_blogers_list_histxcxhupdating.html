@@ -1,0 +1,49 @@
+<!Doctype="html" encoding="utf-8">
+{% load static %}
+<html>
+<head>
+  <title>Update genuine blogers List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-min.css" %}"/>
+  <script type="text/javascript" src="{% static "bootstrap/js/jquery.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "autosize.js" %}"></script>
+</head>
+<body>
+<nav class="navbar navbar-default fixednav">
+  <div class="container-fluid">
+    <div class="navbar-header" style="margin:0px;padding:0px" align="center" valign="center">
+      <a class="navbar-brand" href="#" style="padding: 0px;background-color: white;"><img src="{% static "images/hist.png" %}" width="90" height="50"></a>
+    </div>
+  </div>
+</nav>
+	<div class="row">
+		<div class="panel col-sm-4">
+			<div style="margin: 30px">
+				<a href="{% url 'updateGeniuneBlogers' %}" class="btn btn-default">Update list of genuine blogers</a>
+			</div>
+			
+		</div>
+		<div class="panel panel-default col-sm-8" style="height: 100%; overflow: auto;">
+			<div class="panel-heading">
+				List of Genuine Blogers
+			</div>
+			<div class="panel-body">
+				<table class="table table-responsive table-hover table-striped table-bordered">
+					<tr>
+						<th>User name</th>
+						<th>Number of followers</th>
+						<th>Become geniune bloger on</th>
+					</tr>
+				{% for bloger in blogers %}
+				<tr>
+					<td>{{bloger.username.username}}</td>
+					<td>{{bloger.followers}}</td>
+					<td>{{bloger.date}}</td>
+				</tr>
+				{% endfor %}
+			</table>
+			</div>
+		</div>
+	</div>
+</body>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>Hist - Sign up</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-min.css" %}">
+	<script type="text/javascript" src="{% static "histjavascript.js" %}"></script>
+	<style type="text/css">
+		.fixednav {
+		  overflow: hidden;
+		  position: fixed;
+		  top: 0;
+		  width: 100%;
+		  z-index: 1
+		}
+		.main {
+		  z-index: 0
+		  padding: 16px;
+		  margin-top: 4%;
+		  height:87%; 
+		  width: 100%;
+		  background-color:white;/* Used in this example to enable scrolling */
+		}
+		.btn{
+			border-radius: 0px;
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-default fixednav" style="background-color: #5795c5;">
+  <div class="container-fluid">
+  	<u class="nav navbar-nav">
+    <li class="panel-success" style="padding:0px;">
+        <a class="navbar-brand" style="color:white;padding: 5px"><span class="glyphicon glyphicon-leaf" style="font-size: 30px;"></span></a>
+    </li>
+  </u>
+  </div>
+</nav>
+<div class="row main" style="padding-top: 50px;text-align: center;">
+	
+	
+	<center>
+	<div class="panel panel-default" style="width: 450px">
+		<h3 style="text-align: center">Create <b>HiSt</b> Account</h3>
+		<hr>
+		<form method="POST" action="{% url "signup" %}" class="form-group" id="signupForm">{% csrf_token %}
+			<table class="table-responsive table-condensed">
+			<tr>
+				<td>
+					Phone number including country code<input type="text" name="phone" class="form-control" placeholder="+251123456789" style="font-size: 20px">
+				</td>
+			</tr>
+			<tr>
+				<td>	
+					Birth date<input type="date" name="birthdate" class="form-control" placeholder="dd/mm/yyyy" style="font-size:20px">
+				</td>
+			</tr>
+			<tr>
+				<td>Sex
+					<select class="form-control" name="sex">
+						<option value="Male">Male</option>
+						<option value="Female">Female</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Password<input type="password" name="password" class="form-control" style="font-size: 20px">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Re-enter password<input type="password" name="againpass" class="form-control" style="font-size: 20px">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="submit" class="btn btn-block" style="background-color: #5795c5;color:white" onclick ="signup()" value="Next">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="panel" style="font-size: 20px; color: red;">{{message}}</div>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</center>
+</div>
+</body>
+</html>

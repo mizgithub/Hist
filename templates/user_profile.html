@@ -1,0 +1,134 @@
+<!Doctype="html" encoding="utf-8">
+{% load static %}
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-min.css" %}"/>
+  <script type="text/javascript" src="{% static "bootstrap/js/jquery.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "autosize.js" %}"></script>
+<style type="text/css">
+body {margin:0;background-color:#E9E8F2;}
+.post-panel, .left-panel, .right-panel, .main{ background-color:transparent; }
+</style>
+<script type="text/javascript">
+  function loadDate(){
+    var date=new Date();
+    var day=date.getDate();
+    var month=date.getMonth()+1;
+    var year=date.getFullYear();
+    document.getElementById("day").innerHTML=day;
+    document.getElementById("month").innerHTML=month;
+    document.getElementById("year").innerHTML=year;
+  }
+  function senddata(){
+    var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              
+                
+            }
+        };
+        http.open("GET", "get_data", true);
+        http.send();
+  }
+</script>
+</head>
+<body onload="loadDate()">
+  {% include "navbar_view.html" %}
+<hr>
+<br>
+  <div class="row main">
+    <div class="col-sm-2 panel left-panel" style="margin-left:0px;margin-right:10px;padding-left: 20px; border-radius: 0px; border-right: 0px;border-color:transparent">
+
+      
+    </div>
+    <div class="panel col-sm-5 post-panel"  style="height: 100%; overflow: hidden;border-radius: 0px;;border-color:transparent;">
+      <div style=";overflow-y: auto; width: 100%;height:100%;padding-left: 17px; padding-right: 17px;box-sizing: content-box;border-color:transparent;">
+        <div class="panel" style="height:;padding:20px;">
+          <table class="table table-responsive" style="width:100%;border-width: 0px">
+          <tr><td rowspan="4">
+          <span class="glyphicon glyphicon-user" style="font-size:130px"></span>
+          <b style="font-size:40px">{{profile.username}}</b></td>
+          <td>
+              Phone N<u>o</u>.
+          </td>
+          <td>
+            {{profile.phonenumber}}
+            <a href="#" onclick="$('#phoneeditbutton').slideUp(0);$('#phonefield').slideDown(0);" id="phoneeditbutton"><span class="glyphicon glyphicon-pencil" style="font-size:12px"></span></a>
+            <input type="number" class="form-control" name="phone" id="phonefield" style="display: none">
+          </td></tr>
+          <tr><td>
+            Sex 
+          </td>
+          <td>
+            {{profile.sex}}
+            <a href="#" onclick="$('#sexeditbutton').slideUp(0);$('#sexfield').slideDown(0);" id="sexeditbutton"><span class="glyphicon glyphicon-pencil" style="font-size:12px"></span></a>
+            <select name="sex" style="display: none" class="form-control" id="sexfield">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </td></tr>
+          <tr><td>
+            Birth Date
+          </td>
+          <td>
+            {{profile.birthdate}} <a href="#" onclick="$('#birthdateeditbutton').slideUp(0);$('#birthdatefield').slideDown(0);" id="birthdateeditbutton"><span class="glyphicon glyphicon-pencil" style="font-size:12px"></span></a>
+            <input type="date" class="form-control" name="birthdate" id="birthdatefield" style="display: none">
+          </td></tr>
+          <tr><td colspan="2" align="right">
+            <div class="btn-group">
+            <input type="submit" class="btn btn-default" name="" value="Save changes">
+            <button class="btn btn-default btn" onclick="$('#phonefield').slideUp(0);$('#sexfield').slideUp(0);$('#birthdatefield').slideUp(0);$('#phoneeditbutton').slideDown(0); $('#sexeditbutton').slideDown(0); $('#birthdateeditbutton').slideDown(0);">Cancel
+            </button>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td><td colspan="3"><button class="btn btn-link btn-block" onclick="$('#changepasswordpanel').slideDown(0);">Change password</button></td><td>&nbsp;</td></tr>
+        </table>
+        <div class="panel panel-default" style="display: none;" id="changepasswordpanel">
+          <h3>Change password</h3>
+          <form>
+            <table class="table table-responsive" style="width:100%">
+              <tr>
+                <td>
+                  Old password
+                </td>
+                <td><input type="password" class="form-control" name="oldpassword"></td>
+              </tr>
+              <tr>
+                <td>
+                  New password
+                </td>
+                <td>
+                  <input type="password" class="form-control" name="newpassword">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Confirm new password
+                </td>
+                <td>
+                  <input type="password" class="form-control" name="confirmnewpassword">
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" align="right">
+                  <div class="btn-group">
+                  <input type="submit" name="" class="btn btn-default" value="Save change">
+                  <input type="button" name="" class="btn btn-default" value="Cancel" onclick="$('#changepasswordpanel').slideUp(0);">
+                </div>
+                </td>
+              </tr>
+            </table>
+          </form>
+      </div>
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+        
+</body>
+</html>

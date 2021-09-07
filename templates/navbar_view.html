@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+<style type="text/css">
+  .fixednav {
+    overflow: hidden;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    z-index: 1;
+
+  }
+  .navbar-anchor:hover{
+    background-color:#5795c5 !important;
+    color:#dddddd !important;
+  }
+</style>
+</head>
+<body>
+{% load static %}
+<nav class="navbar fixednav" style="background-color:#5795c5;font-weight: bold; border-radius: 0px;box-shadow: -1px 2px #77777711;">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li class="panel-success" style="padding:0px; padding-left:100px;">
+        <a class="navbar-brand navbar-anchor" style="color:white;padding: 5px" href="{% url "home" %}" ><span class="glyphicon glyphicon-leaf" style="font-size: 30px;padding: 3px;"></span></a>
+      </li>
+      <li><a href="{% url "home" %}" style="color:white" class="navbar-anchor"> <span class="glyphicon glyphicon-home"></span> Home</a></li>
+      
+    </ul>
+    <form class="navbar-form navbar-left" action="/search" method="GET" style="width: 40%">
+      
+        <table class="table-responsive" style="width: 100%" cellspacing="0">
+          <tr><td style="width: 90%;padding-right: 0px">
+            <input type="text" class="form-control input-sm" placeholder="Search contents" style="width: 100%;" name="hashTag"></td>
+          <td style="padding-left: 0px">
+      <button type="submit" class="btn navbar-anchor" style="height:30px;background-color:#4c8aba"><span class="glyphicon glyphicon-search" style="color:white"></span></button></td>
+    </tr>
+  </table>
+    </form>
+    <ul class="nav navbar-nav">
+      <li><a href="{% url "savedPosts" %}" style="color:white" class="navbar-anchor"><span class="glyphicon glyphicon-floppy-disk"></span> Saved Posts</a></li>
+      <li><a href="/blogers?username={{username}}" style="color:white" class="navbar-anchor"><span class="glyphicon glyphicon-user"></span> {{username}} (You)</a></li>
+      <li><a href="/showProfile" style="color:white" class="navbar-anchor"><span class="glyphicon glyphicon-cog"></span> Setting</a></li>
+      <li><a href="{% url "logout" %}" style="color:white" class="navbar-anchor"><span class="glyphicon glyphicon-lock"></span> Logout</a></li>
+    </ul>
+    
+  </div>
+
+</nav>
+</body>
+</html>
